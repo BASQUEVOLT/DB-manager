@@ -21,8 +21,8 @@ class Cell:
         self.cycle = DBConnector().fetch_cycle(id)
         self.step = DBConnector().fetch_step(id)
         self.schedule = DBConnector().fetch_schedule(id)
-        # self.parameters = DBConnector().fetch_cell_parameters(id)
-        # self.formation = DBConnector().fetch_formation(id)
+        self.parameters = DBConnector().fetch_cell_parameters(id)
+        self.formation = DBConnector().fetch_formation(id)
         self.test_id_dict = {}
         self.color = self.generate_random_color()
         
