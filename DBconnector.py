@@ -239,6 +239,20 @@ class DBConnector:
         return df    
     
     def fetch_formation(self, id):
+        """
+        Function to download the formation data from the Neware Databse
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+
+        Returns
+        -------
+        df : pd dataframe
+            data from the record table.
+
+        """
         # Connect to MySQL
         self.connect()
                 
