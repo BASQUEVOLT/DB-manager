@@ -239,6 +239,14 @@ class DBConnector:
         return df    
     
     def fetch_formation(self, id):
+        """_summary_
+
+        Args:
+            id (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         # Connect to MySQL
         self.connect()
                 
