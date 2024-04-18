@@ -35,22 +35,29 @@ class Cell:
                 
         
     def split_data(self):
+        """This function creates a dictionary with the the different builders and the correspondiing test_id of the cell.
+        """
         for builder in self.schedule.Builder.unique():
             test_id = self.schedule.loc[self.schedule['Builder'] == builder, 'test_id'].iloc[0]
             self.test_id_dict[builder] = test_id
             
     def calculate_cycling(self):
-        self.cycle["ce"] = self.cycle.specific_discharge_capacity/self.cycle.specific_charge_capacity*100
+        """This funtion calculates from the cycle data the coulombic efficiency, the round trip efficiency and the state of health
+        """
+        self.cycle["ce"] = self.cycle.specific_discharge_capacity/self.cycle.specific_charge_capacity*100 
         self.cycle["rte"] = self.cycle.specific_discharge_energy/self.cycle.specific_charge_energy*100
         self.cycle["soh"] = self.cycle.specific_discharge_capacity/self.cycle[self.cycle.cycle_id == 5].specific_discharge_capacity*100
         # self.formation["specific_discharge_capacity"] = self.formation['capacity']/self.formation["active_material"]
         
     def get_cycles(self):
+        """This function prints the cycles of a cell if the soh is less than 80
+        """
         # if self.status.
         print(self.cycle[self.cycle.soh < 80].cycle_id.iloc[1])
         
     def plot_cycling(self):
-      
+        """This function plots a double axis scatter plot with: specific_discharge_capacity, CE and RTE vs cycles
+        """
         df = self.cycle[self.cycle.test_id == self.test_id_dict["CY"]]
         df = df[['cycle_id', 'specific_discharge_capacity', 'ce', 'rte']]
         
@@ -90,7 +97,8 @@ class Cell:
         plt.show()
         
     def plot_cycling2(self):
-      
+        """This function is plotting the same as plot_cycing function but, this time, in a figure with 2 different olots
+        """
         df = self.cycle[self.cycle.test_id == self.test_id_dict["CY"]]
         df = df[['cycle_id', 'specific_discharge_capacity', 'ce', 'rte']]
         
@@ -150,6 +158,9 @@ class Cells:
         self.preprocessing()    
         
     def preprocessing(self):
+        """This function takes all the cells passed in the init and applies to the split_data and calculate_cycling function.
+        If data is not cycling or formation data, it removes the cell
+        """
         cell_screen = []
         print("Passed ID", [cell.id for cell in self.cells])
         for i, cell in enumerate(self.cells):
@@ -166,7 +177,8 @@ class Cells:
 
             
     def plot_cycling(self):
-        
+        """This function generates a figure with 2 scatter subplots, the first one with specific_discharge_capacity vs cycle, second with CE and RTE vs cycling.
+        """
         legend_markers = [Line2D([0], [0], marker='v', color='k', linewidth=0), Line2D([0], [0], marker='s', color='k', markerfacecolor='none', linewidth=0)]
         fig, (ax2, ax1) = plt.subplots(2, 1, figsize=(6, 8), gridspec_kw={'height_ratios': [1, 4]}, sharex=True)
         
@@ -219,7 +231,8 @@ class Cells:
         plt.show()
         
     def plot_formation(self):
-        
+        """This function plots a figure with 2 line subplots, one voltage vs cycles, and the second current vs cycles, for the formation data
+        """
         legend_markers = [Line2D([0], [0], marker='v', color='k', linewidth=0), Line2D([0], [0], marker='s', color='k', markerfacecolor='none', linewidth=0)]
         fig, (ax2, ax1) = plt.subplots(2, 1, figsize=(8, 10), gridspec_kw={'height_ratios': [1, 1]}, sharex=True)
         
