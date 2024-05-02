@@ -39,5 +39,5 @@ def cell_list(ids):
 # puchcells.plot_cycling()
 
 
-ttt = Cells(cell_list([68]))
+ttt = Cells(cell_list([38]))
 ttt.plot_formation()
