@@ -15,6 +15,14 @@ from DBconnector import DBConnector
 from Cell import Cell, Cells
 
 def cell_list(ids):
+    """This function generates a list with BQV cell ids (without the prefix and suffix)
+
+    Args:
+        ids (list): a list with the number of the cell (without all the beginning zeros)
+
+    Returns:
+        list: all the ids with the the format BQV000000000000001
+    """
     return ["BQV{:015d}".format(id) for id in ids]
 
 
@@ -39,5 +47,11 @@ def cell_list(ids):
 # puchcells.plot_cycling()
 
 
+<<<<<<< HEAD
 ttt = Cells(cell_list([38]))
 ttt.plot_formation()
+=======
+ttt = Cells(cell_list([68]))
+# ttt.plot_formation()
+ttt.cells[0].cycle.head()
+>>>>>>> 225317829cfa3b870c1bea3f04386eae3e851d77
