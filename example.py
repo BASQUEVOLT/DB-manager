@@ -47,6 +47,11 @@ def cell_list(ids):
 # puchcells.plot_cycling()
 
 
+<<<<<<< HEAD
+ttt = Cells(cell_list([38]))
+ttt.plot_formation()
+=======
 ttt = Cells(cell_list([68]))
 # ttt.plot_formation()
 ttt.cells[0].cycle.head()
+>>>>>>> 225317829cfa3b870c1bea3f04386eae3e851d77
