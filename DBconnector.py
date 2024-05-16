@@ -14,11 +14,14 @@ class DBConnector:
     """
     This is a class to manage the access to the database data.
     """
-    def __init__(self):
+    def __init__(self, db_name='testlab-db'):
         self.host = 'testlab-bd.testlab-bd.private.mysql.database.azure.com'
         self.user = 'testlab-user'
-        self.password = 'cFZ5MDA0NXBsTFJBMXVpZ1pxaVo='
-        self.database = 'testlab-db'
+        # self.password = 'cFZ5MDA0NXBsTFJBMXVpZ1pxaVo='
+        # self.database = 'testlab-db'
+        self.user = "ecalandrini"
+        self.password = "ZjNiNFo2O0ZNPDdyem5qIw=="
+        self.database = db_name
         self.conn = None
         self.cursor = None
     
@@ -385,5 +388,233 @@ class DBConnector:
         df = self.cast_variable(df, data_type=['int64', 'int64', 'str', 'str', 'str', 'int64', 'int64', 'int64', 'int64', 'str', 'float', 'float', 'float', 'float', 'float', 'float', 'str', 'str', 'str', 'str', 'float', 'float'])
         
         return df 
+    
+    def general_query(self, query_string):
+        
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        
+        # Fetch all records from the table
+        self.cursor.execute(query_string)
+        records = self.cursor.fetchall()
+        
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+        
+        return df 
+    
+    def fetch_testid(self, id):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT DISTINCT test_id, Builder FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+        df = self.cast_variable(df, data_type=['int64', 'str'])
+        
+        return df 
+    
+    def fetch_activemass(self, id):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT DISTINCT active_material FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        active_mass = float(self.cursor.fetchall()[0][0].replace(",", "."))
+               
+        return active_mass
+    
+    def fetch_status(self, id):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT btsSysState FROM `testlab-db`.channel_status WHERE packBarCode LIKE '%{id}%';")
+        record = self.cursor.fetchall()[0][0]
+               
+        return record
+    
+    def fetch_chamber(self, id):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        # self.cursor.execute(f"SELECT CONCAT(equiptCode, ",", channelNo, ",", channelCode) FROM `testlab-db`.channel_status WHERE packBarCode LIKE '%{id}%';")
+        self.cursor.execute(f"SELECT DISTINCT Builder, chl_id FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        records = self.cursor.fetchall()
+        
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+               
+        # Close cursor and connection
+        self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+        df = self.cast_variable(df, data_type=['str', 'str'])
+        
+        return df 
+    
+    def fetch_lastCycleNumber(self, id):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT cycle_id from `testlab-db`.cycle where barcode like '%{id}%' ORDER BY CAST(cycle_id AS UNSIGNED) DESC LIMIT 1;")
+        record = int(self.cursor.fetchall()[0][0])
+               
+        return record
+    
+    def fetch_protocol(self, id):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT test_id, seq_id, step_id, step_type, step_time, setting_voltage, setting_rate, setting_current, cut_of_rate, cut_of_current, recording_conditions FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+        df = self.cast_variable(df, data_type=['int64', 'int64', 'int64', 'str', 'str', 'float', 'float', 'float', 'float', 'float', 'str'])
+        
+        return df 
+    
+    def fetch_time(self, id):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT DISTINCT Builder, StartTIme, EndTime FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+        df = self.cast_variable(df, data_type=['str', 'str', 'str'])
+        
+        return df 
+    
+    def fetch_chg_dchg_curves(self, id):
+        cell_info = self.fetch_cell_info(id)
+        
+        database = '`dev-db`.record60s_'
+        if cell_info.ID.values == 'Coin':
+            database += 'coin'
+        elif cell_info.ID.values == '1003' or cell_info.ID == '1003Old':
+            database += 'bqv'
+        elif cell_info.ID.values == '1003CIC':
+            database += 'cic'
+        
+        df = self.general_query(f"SELECT cycle_id, voltage, specific_capacity FROM {database} WHERE barcode LIKE '{id}';")
+        return df
+    
+    def fetch_cell_info(self, id):
+        df = self.general_query(f"SELECT * FROM `dev-db`.ids WHERE barcode LIKE '{id}';")
+        return df
+    
+    def fetch_specific_capacities(self, id):
+        df = self.general_query(f"SELECT cycle_id, specific_chg_capa, specific_dchg_capa FROM `dev-db`.cycle_data WHERE barcode LIKE '{id}';")
+        return df
+    
+    def fetch_specific_efficiencies(self, id):
+        df = self.general_query(f"SELECT cycle_id, ce, rte, my_soh FROM `dev-db`.cycle_data WHERE barcode LIKE '{id}';")
+        return df
+    
+    def fetch_steptime(self, id):
+        df = self.general_query(f"SELECT cycle_id, step_type, step_time FROM `dev-db`.step_time WHERE barcode LIKE '{id}';")
+        pivot_df = pd.pivot(df, values='step_time', index='cycle_id', columns='step_type').reset_index()
+        return pivot_df
+    
+    def fetch_end_voltage(self, id):
+        df = self.general_query(f"SELECT cycle_id, step_type, previous_step_type, end_voltage FROM `dev-db`.end_voltage WHERE barcode LIKE '{id}';")
+        pivot_df = pd.pivot(df, values='end_voltage', index='cycle_id', columns='previous_step_type').reset_index()
+        return pivot_df
+    
+    def fetch_hioki(self):
+        # Connect to MySQL
+        self.connect()
+                
+        # Create a cursor object
+        self.set_cursor(prepared=True)
+        # Fetch all records from the table
+        self.cursor.execute("SELECT * FROM `testlab-db`.hioki_data;")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+        df_hioki_decoded = df.map(self.decode_bytes)
+        column_types = {
+            'ID': str,
+            'Start_time': str,
+            'Completion_time': str,
+            'Email':str,
+            'Name':str,
+            'Last_modified_time':str,
+            'Date':str,
+            'State':str,
+            'OCV':float,
+            'IR':float,
+            'Cell_Barcode':str,
+            'OCV_ok':str,
+            'IR_ok':str
+            }
+        df_hioki = df_hioki_decoded.astype(column_types)
+        return df_hioki
+    
+    def decode_bytes(self, value):
+        if isinstance(value, bytearray):
+            return value.decode()
+        else:
+            return value
+
         
         
