@@ -8,7 +8,7 @@ Created on Mon May 20 08:28:41 2024
 from setuptools import find_packages, setup
 
 setup(
-    name="DB_Connector",
+    name="DBconnector",
     version="0.0.0",
     packages=find_packages(),
     description="Utility to connect to the neware server and fetch the data",
@@ -18,7 +18,6 @@ setup(
     author_email="ecalandrini@basquevolt.com",
     url="https://github.com/BASQUEVOLT/DB-manager",
     install_requires=[
-        "base64",
         "mysql-connector",
         "pandas",
         "numpy",

@@ -7,7 +7,7 @@ Created on Fri Apr  5 10:00:42 2024
 
 import matplotlib.pyplot as plt
 import numpy as np
-from DBconnector import DBConnector
+from DBconnector import DBconnector
 from matplotlib.lines import Line2D
 
 class Cell:
@@ -17,12 +17,12 @@ class Cell:
             self.id = id.split('-')[1][:3]+str(int(id.split('-')[1][3:]))
         else:
             self.id = id
-        self.status = DBConnector().fetch_status(id)
-        self.cycle = DBConnector().fetch_cycle(id)
-        self.step = DBConnector().fetch_step(id)
-        self.schedule = DBConnector().fetch_schedule(id)
-        self.parameters = DBConnector().fetch_cell_parameters(id)
-        self.formation = DBConnector().fetch_formation(id)
+        self.status = DBconnector().fetch_status(id)
+        self.cycle = DBconnector().fetch_cycle(id)
+        self.step = DBconnector().fetch_step(id)
+        self.schedule = DBconnector().fetch_schedule(id)
+        self.parameters = DBconnector().fetch_cell_parameters(id)
+        self.formation = DBconnector().fetch_formation(id)
         self.test_id_dict = {}
         self.color = self.generate_random_color()
         

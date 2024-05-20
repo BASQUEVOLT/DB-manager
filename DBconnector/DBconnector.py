@@ -10,20 +10,13 @@ import base64
 import pandas as pd
 import numpy as np
 
-class DBConnector:
+class DBconnector:
     """
     This is a class to manage the access to the database data.
     """
     def __init__(self, conn):
-        #self.host = 'testlab-bd.testlab-bd.private.mysql.database.azure.com'
-        #self.user = 'testlab-user'
-        # self.password = 'cFZ5MDA0NXBsTFJBMXVpZ1pxaVo='
-        # self.database = 'testlab-db'
-        #self.user = "ecalandrini"
-        #self.password = "ZjNiNFo2O0ZNPDdyem5qIw=="
-        #self.database = db_name
         self.conn = conn
-        self.cursor = None
+        self.cursor = self.conn.cursor()
     
     def connect(self):
         # Connect to MySQL
@@ -75,8 +68,6 @@ class DBConnector:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
         table="record"
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -89,7 +80,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -107,8 +98,6 @@ class DBConnector:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
         table="cycle"
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -121,7 +110,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -139,8 +128,6 @@ class DBConnector:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
         table="step"
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -153,7 +140,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -171,8 +158,6 @@ class DBConnector:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
         table="channel_status"
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -185,7 +170,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -203,8 +188,6 @@ class DBConnector:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
         table="schedule"
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -217,7 +200,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -237,8 +220,6 @@ class DBConnector:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
         table="pouch_cell_parameters"
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -274,7 +255,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -289,8 +270,6 @@ class DBConnector:
         Returns:
             df(pandas dataframe): dataframe with ids. 
         """
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -304,7 +283,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -326,9 +305,7 @@ class DBConnector:
             data from the record table.
 
         """
-        # Connect to MySQL
-        self.connect()
-                
+
         # Create a cursor object
         self.set_cursor()
         self.cursor.execute(f"SELECT distinct(test_id) FROM `testlab-db`.schedule where barcode like '%{id}%' and Builder like 'FM';")
@@ -342,7 +319,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -365,8 +342,6 @@ class DBConnector:
             data from the record table.
 
         """
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -381,7 +356,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -390,12 +365,9 @@ class DBConnector:
         return df 
     
     def general_query(self, query_string):
-        
-        # Connect to MySQL
-        self.connect()
-                
+                        
         # Create a cursor object
-        self.set_cursor()
+        # self.set_cursor()
         
         # Fetch all records from the table
         self.cursor.execute(query_string)
@@ -405,7 +377,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -413,8 +385,6 @@ class DBConnector:
         return df 
     
     def fetch_testid(self, id):
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -426,7 +396,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -435,8 +405,6 @@ class DBConnector:
         return df 
     
     def fetch_activemass(self, id):
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -447,9 +415,7 @@ class DBConnector:
         return active_mass
     
     def fetch_status(self, id):
-        # Connect to MySQL
-        self.connect()
-                
+
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
@@ -459,8 +425,6 @@ class DBConnector:
         return record
     
     def fetch_chamber(self, id):
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -473,7 +437,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
                
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -482,8 +446,6 @@ class DBConnector:
         return df 
     
     def fetch_lastCycleNumber(self, id):
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -494,8 +456,6 @@ class DBConnector:
         return record
     
     def fetch_protocol(self, id):
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -507,7 +467,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
@@ -516,8 +476,6 @@ class DBConnector:
         return df 
     
     def fetch_time(self, id):
-        # Connect to MySQL
-        self.connect()
                 
         # Create a cursor object
         self.set_cursor()
@@ -529,28 +487,14 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
         df = self.cast_variable(df, data_type=['str', 'str', 'str'])
         
         return df 
-    
-    def fetch_chg_dchg_curves(self, id):
-        cell_info = self.fetch_cell_info(id)
-        
-        database = '`dev-db`.record60s_'
-        if cell_info.ID.values == 'Coin':
-            database += 'coin'
-        elif cell_info.ID.values == '1003' or cell_info.ID == '1003Old':
-            database += 'bqv'
-        elif cell_info.ID.values == '1003CIC':
-            database += 'cic'
-        
-        df = self.general_query(f"SELECT cycle_id, voltage, specific_capacity FROM {database} WHERE barcode LIKE '{id}';")
-        return df
-    
+       
     def fetch_cell_info(self, id):
         df = self.general_query(f"SELECT * FROM `dev-db`.ids WHERE barcode LIKE '{id}';")
         return df
@@ -587,7 +531,7 @@ class DBConnector:
         column_names = [i[0] for i in self.cursor.description]
         
         # Close cursor and connection
-        self.close_connection()
+        #self.close_connection()
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)

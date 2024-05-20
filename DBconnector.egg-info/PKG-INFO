@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: DBconnector
+Version: 0.0.0
+Summary: Utility to connect to the neware server and fetch the data
+Home-page: https://github.com/BASQUEVOLT/DB-manager
+Author: Eugenio Calandrini
+Author-email: ecalandrini@basquevolt.com
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+Requires-Dist: mysql-connector
+Requires-Dist: pandas
+Requires-Dist: numpy
