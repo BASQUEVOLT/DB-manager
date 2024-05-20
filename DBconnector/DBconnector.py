@@ -14,15 +14,15 @@ class DBConnector:
     """
     This is a class to manage the access to the database data.
     """
-    def __init__(self, db_name='testlab-db'):
-        self.host = 'testlab-bd.testlab-bd.private.mysql.database.azure.com'
-        self.user = 'testlab-user'
+    def __init__(self, conn):
+        #self.host = 'testlab-bd.testlab-bd.private.mysql.database.azure.com'
+        #self.user = 'testlab-user'
         # self.password = 'cFZ5MDA0NXBsTFJBMXVpZ1pxaVo='
         # self.database = 'testlab-db'
-        self.user = "ecalandrini"
-        self.password = "ZjNiNFo2O0ZNPDdyem5qIw=="
-        self.database = db_name
-        self.conn = None
+        #self.user = "ecalandrini"
+        #self.password = "ZjNiNFo2O0ZNPDdyem5qIw=="
+        #self.database = db_name
+        self.conn = conn
         self.cursor = None
     
     def connect(self):
