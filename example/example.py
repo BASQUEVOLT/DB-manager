@@ -28,4 +28,12 @@ test = DBconn.general_query("select distinct test_id, builder from `testlab-db`.
 test2 = DBconn.general_query("select distinct test_id, builder from `testlab-db`.`schedule` where barcode = '1003-BQV000000000000247-1'")
 test3 = DBconn.fetch_testid('1003-BQV000000000000247-1')
 
+cells = Cells(DBconn, ['RDCCS2UFNMC9XX0705001'])
+cells.plot_cycling()
+xxx = cells.cells[0].dQdV()
+# cell.cycle.plot(x='cycle_id', y=['rte', 'ce'])#, backend='plotly')
+# plt.show()
+
 DBconn.close_connection()
+
+

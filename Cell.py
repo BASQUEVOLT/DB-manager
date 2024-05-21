@@ -11,19 +11,19 @@ from DBconnector import DBconnector
 from matplotlib.lines import Line2D
 
 class Cell:
-    def __init__(self, id):
+    def __init__(self, conn, id):
         
-        if "BQV" in id and '-' in id:
-            self.id = id.split('-')[1][:3]+str(int(id.split('-')[1][3:]))
-        else:
-            self.id = id
-        self.status = DBconnector().fetch_status(id)
-        self.cycle = DBconnector().fetch_cycle(id)
-        self.step = DBconnector().fetch_step(id)
-        self.schedule = DBconnector().fetch_schedule(id)
-        self.parameters = DBconnector().fetch_cell_parameters(id)
-        self.formation = DBconnector().fetch_formation(id)
-        self.test_id_dict = {}
+        self.conn = conn
+        self.info = conn.fetch_cell_info(id)
+        self.id = id
+        # self.status = DBconnector().fetch_status(id)
+        self.cycle = conn.fetch_cycle(id)
+        self.record = conn.fetch_records(id)
+        # self.step = DBconnector().fetch_step(id)
+        # self.schedule = DBconnector().fetch_schedule(id)
+        # self.parameters = DBconnector().fetch_cell_parameters(id)
+        # self.formation = DBconnector().fetch_formation(id)
+        # self.test_id_dict = {}
         self.color = self.generate_random_color()
         
     def generate_random_color(self):
@@ -33,6 +33,10 @@ class Cell:
         color = np.random.randint(256, size=(1, 3))/255
         return color
                 
+    def dQdV(self):
+        df = self.record.query("record_time % 60 == 0")
+        dQdV = df.capacity.diff()/df.voltage.diff()
+        return dQdV
         
     def split_data(self):
         """This function creates a dictionary with the the different builders and the correspondiing test_id of the cell.
@@ -151,11 +155,13 @@ class Cell:
         
     
 class Cells:
-    def __init__(self, ids):
+    def __init__(self, conn, ids):
+        
+        self.conn = conn
         self.cells = []
         for id in ids:
-            self.cells.append(Cell(id))
-        self.preprocessing()    
+            self.cells.append(Cell(conn, id))
+        # self.preprocessing()    
         
     def preprocessing(self):
         """This function takes all the cells passed in the init and applies to the split_data and calculate_cycling function.
@@ -185,16 +191,13 @@ class Cells:
         value_80_percent = []
         # Plot 'specific_discharge_capacity' on the first subplot
         for cell in self.cells:
-                
-                if "BQV" in cell.id:
-                    df = cell.cycle[cell.cycle.test_id == cell.test_id_dict["CY"]]
-                elif "RDCC" in cell.id:
-                    df = cell.cycle[cell.cycle.test_id == cell.test_id_dict["FMCY"]]
-                df = df[['cycle_id', 'specific_discharge_capacity', 'ce', 'rte']]
-                print(df[df.cycle_id == 5].cycle_id, df[df.cycle_id == 5].specific_discharge_capacity)
-                value_80_percent.append(df[df.cycle_id == 5].specific_discharge_capacity.values * 0.8)
-            
+                    
+                df = cell.cycle
+                value_80_percent.append(df.specific_discharge_capacity4.unique()[0] * 0.8)
+                # df = df[['cycle_id', 'specific_discharge_capacity', 'ce', 'rte']]
+                # print("ttt", df[df.cycle_id == 5].cycle_id)#, df[df.cycle_id == 5].specific_discharge_capacity)
                 ax1.scatter(df['cycle_id'], df['specific_discharge_capacity'],  edgecolor=cell.color, marker='o', facecolor='none', label=cell.id)
+                ax1.scatter(df['cycle_id'], df['specific_charge_capacity'], marker='x', facecolor=cell.color)
                 
                 # Plot 'ce' and 'rte' on the second subplot
                 ax2.scatter(df['cycle_id'], df['ce'], c=cell.color, marker='v', label='CE')
@@ -202,7 +205,7 @@ class Cells:
 
         print(value_80_percent)
         # Plot horizontal dotted line at 80% of the 5th 'specific_discharge_capacity' value on the first subplot
-        # ax1.axhline(y=np.array(value_80_percent).min(), color='black', linestyle=':', label='80% of SOH')
+        ax1.axhline(y=np.array(value_80_percent).min(), color='black', linestyle=':', label='80% of SOH')
         
         # Set y-label for 'CE' with green color
         ax2.set_ylabel('CE / RTE (%)')

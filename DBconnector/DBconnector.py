@@ -56,8 +56,8 @@ class DBconnector:
         df.replace('', np.nan, inplace=True)
         df = df.astype(data_dict)
         return df
-        
-    def fetch_records(self, id, mod=60):
+    
+    def fetch_records(self, id):
         """This is the function that gets the data from the database. It access to the 'record' table.
 
         Args:
@@ -67,13 +67,12 @@ class DBconnector:
         Returns:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
-        table="record"
                 
         # Create a cursor object
         self.set_cursor()
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM {table} WHERE barcode LIKE '%{id}%' AND record_id mod '{mod}' = 0")
+        self.cursor.execute(f"SELECT cycle_id, step_type, record_time, voltage, current, capacity, TotalTime FROM `testlab-db`.record where barcode = '{id}';")
         records = self.cursor.fetchall()
         
         # Get column names
@@ -84,12 +83,12 @@ class DBconnector:
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
-        df = self.cast_variable(df, data_type=['int64', 'int64', 'str', 'str', 'str', 'int64', 'int64', 'int64', 'int64', 'str', 'float', 'float', 'float', 'float', 'float', 'float', 'str', 'str', 'str', 'str', 'float', 'float'])
+        df = self.cast_variable(df, data_type=['int64', 'str', 'float', 'float', 'float', 'float', 'float'])
         
         return df
     
     def fetch_cycle(self, id):
-        """This is the function that gets the data from the database. It access to the 'cycle' table.
+        """This is the function that gets the data from the database. It access to the 'cycle' table of 'dev-db' database.
 
         Args:
             id (str): Cell ID from Vicarli System.
@@ -97,13 +96,12 @@ class DBconnector:
         Returns:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
-        table="cycle"
                 
         # Create a cursor object
         self.set_cursor()
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM {table} WHERE barcode LIKE '%{id}%'")
+        self.cursor.execute(f"SELECT * FROM `dev-db`.`cycle_data` WHERE barcode = '{id}'")
         records = self.cursor.fetchall()
         
         # Get column names
@@ -114,7 +112,6 @@ class DBconnector:
         
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
-        df = self.cast_variable(df, data_type=['int64', 'int64', 'str', 'str', 'str', 'int64', 'float', 'float', 'float', 'float', 'float', 'float', 'str', 'str', 'str', 'str', 'float', 'float', 'float', 'float', 'float'])
         
         return df
     
@@ -493,10 +490,43 @@ class DBconnector:
         df = pd.DataFrame(records, columns=column_names)
         df = self.cast_variable(df, data_type=['str', 'str', 'str'])
         
+        return df
+    
+    def fetch_qctable(self,):
+                
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT * FROM `lab-db`.all_merged;")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        #self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+
         return df 
        
     def fetch_cell_info(self, id):
-        df = self.general_query(f"SELECT * FROM `dev-db`.ids WHERE barcode LIKE '{id}';")
+        """
+        Function to fetch all the info of the cell with the given id.
+
+        Parameters
+        ----------
+        id : str
+            cell id, e.g. '1003-BQV000000000000217-1'.
+
+        Returns
+        -------
+        df : pandas dataframe
+            dataframe with the cell information.
+
+        """
+        df = self.general_query(f"SELECT * FROM `dev-db`.ids WHERE barcode_corrected = '{id}';")
         return df
     
     def fetch_specific_capacities(self, id):
@@ -508,12 +538,12 @@ class DBconnector:
         return df
     
     def fetch_steptime(self, id):
-        df = self.general_query(f"SELECT cycle_id, step_type, step_time FROM `dev-db`.step_time WHERE barcode LIKE '{id}';")
+        df = self.general_query(f"SELECT cycle_id, step_type, step_time FROM `dev-db`.step_time WHERE barcode = '{id}';")
         pivot_df = pd.pivot(df, values='step_time', index='cycle_id', columns='step_type').reset_index()
         return pivot_df
     
     def fetch_end_voltage(self, id):
-        df = self.general_query(f"SELECT cycle_id, step_type, previous_step_type, end_voltage FROM `dev-db`.end_voltage WHERE barcode LIKE '{id}';")
+        df = self.general_query(f"SELECT cycle_id, step_type, previous_step_type, end_voltage FROM `dev-db`.end_voltage WHERE barcode = '{id}';")
         pivot_df = pd.pivot(df, values='end_voltage', index='cycle_id', columns='previous_step_type').reset_index()
         return pivot_df
     
