@@ -8,7 +8,7 @@ Created on Mon May 20 08:28:41 2024
 from setuptools import find_packages, setup
 
 setup(
-    name="DBconnector",
+    name="rdlab_dbconnector",
     version="0.1.0",
     packages=find_packages(),
     description="Utility to connect to the neware server and fetch the data",
@@ -16,7 +16,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Eugenio Calandrini",
     author_email="ecalandrini@basquevolt.com",
-    url="https://github.com/BASQUEVOLT/DB-manager",
+    url="https://github.com/BASQUEVOLT/rdlab_dbconnector",
     install_requires=[
         "mysql-connector",
         "pandas",
