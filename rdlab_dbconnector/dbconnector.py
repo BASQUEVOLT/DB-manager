@@ -10,7 +10,7 @@ import base64
 import pandas as pd
 import numpy as np
 
-class DBconnector:
+class DBConnector:
     """
     This is a class to manage the access to the database data.
     """
