@@ -10,7 +10,7 @@ import base64
 import pandas as pd
 import numpy as np
 
-class DBconnector:
+class DBConnector:
     """
     This is a class to manage the access to the database data.
     """
@@ -28,10 +28,26 @@ class DBconnector:
         )
         
     def set_cursor(self):
+        """
+        Setter function of the cursor.
+
+        Returns
+        -------
+        None.
+
+        """
         # Create a cursor object
         self.cursor = self.conn.cursor()
     
     def close_connection(self):
+        """
+        Close the connection with the database.
+
+        Returns
+        -------
+        None.
+
+        """
         # Close cursor and connection
         self.cursor.close()
         self.conn.close()
@@ -124,13 +140,12 @@ class DBconnector:
         Returns:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
-        table="step"
-                
+               
         # Create a cursor object
         self.set_cursor()
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM {table} WHERE barcode LIKE '%{id}%'")
+        self.cursor.execute(f"SELECT * FROM `testlab-db`.`step` WHERE barcode = '{id}'")
         records = self.cursor.fetchall()
         
         # Get column names
@@ -154,13 +169,12 @@ class DBconnector:
         Returns:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
-        table="channel_status"
                 
         # Create a cursor object
         self.set_cursor()
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM {table} WHERE packBarCode LIKE '%{id}%'")
+        self.cursor.execute(f"SELECT * FROM `testlab-db`.`channel_status` WHERE packBarCode = '{id}'")
         records = self.cursor.fetchall()
         
         # Get column names
@@ -184,13 +198,12 @@ class DBconnector:
         Returns:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
-        table="schedule"
                 
         # Create a cursor object
         self.set_cursor()
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM {table} WHERE barcode LIKE '%{id}%'")
+        self.cursor.execute(f"SELECT * FROM `testlab-db`.`schedule` WHERE barcode = '{id}'")
         records = self.cursor.fetchall()
         
         # Get column names
@@ -216,7 +229,6 @@ class DBconnector:
         Returns:
             df(pandas dataframe): dataframe with neware data about the requested cell
         """
-        table="pouch_cell_parameters"
                 
         # Create a cursor object
         self.set_cursor()
@@ -245,7 +257,7 @@ class DBconnector:
             }
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM {table} WHERE Vicarli_system_ID LIKE '%{id}%'")
+        self.cursor.execute(f"SELECT * FROM `lab-db`.`pouch_cell_parameters` WHERE Vicarli_system_ID LIKE '%{id}%'")
         records = self.cursor.fetchall()
         
         # Get column names
@@ -305,11 +317,11 @@ class DBconnector:
 
         # Create a cursor object
         self.set_cursor()
-        self.cursor.execute(f"SELECT distinct(test_id) FROM `testlab-db`.schedule where barcode like '%{id}%' and Builder like 'FM';")
+        self.cursor.execute(f"SELECT distinct(test_id) FROM `testlab-db`.schedule where barcode = '{id}' and Builder = 'FM';")
         test_id = self.cursor.fetchall()[0][0] #Here we get the code for the formation protocol of the given cell
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM `testlab-db`.record where barcode like '%{id}%' AND record_id mod 60 = 0 and test_id like '{test_id}';")
+        self.cursor.execute(f"SELECT * FROM `testlab-db`.record where barcode = '{id}' AND record_id mod 60 = 0 and test_id like '{test_id}';")
         records = self.cursor.fetchall()  #And here finally we get the data 
         
         # Get column names
@@ -342,11 +354,11 @@ class DBconnector:
                 
         # Create a cursor object
         self.set_cursor()
-        self.cursor.execute(f"SELECT distinct(test_id) FROM `testlab-db`.schedule where barcode like '%{id}%' and Builder like 'FM';")
+        self.cursor.execute(f"SELECT distinct(test_id) FROM `testlab-db`.schedule where barcode = '{id}' and Builder = 'FM';")
         test_id = self.cursor.fetchall()[0][0]
         
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT * FROM `testlab-db`.record where barcode like '%{id}%' AND step_id between 34 and 37;")
+        self.cursor.execute(f"SELECT * FROM `testlab-db`.record where barcode = '{id}' AND step_id between 34 and 37;")
         records = self.cursor.fetchall()#Here we get the code for the formation protocol of the given cell
         
         # Get column names
@@ -362,6 +374,20 @@ class DBconnector:
         return df 
     
     def general_query(self, query_string):
+        """
+        Function to execute a query on the database.
+
+        Parameters
+        ----------
+        query_string : str
+            Script with the query to execute.
+
+        Returns
+        -------
+        df : pd dataframe
+            table with the result of the query.
+
+        """
                         
         # Create a cursor object
         # self.set_cursor()
@@ -382,11 +408,25 @@ class DBconnector:
         return df 
     
     def fetch_testid(self, id):
+        """
+        Function to fetch the test_id and the builder of a cell.
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+
+        Returns
+        -------
+        df : pd dataframe
+            Table with the test_id and the builder code.
+
+        """
                 
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT DISTINCT test_id, Builder FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        self.cursor.execute(f"SELECT DISTINCT test_id, Builder FROM `testlab-db`.schedule WHERE barcode = '{id}';")
         records = self.cursor.fetchall()
                
         # Get column names
@@ -402,32 +442,73 @@ class DBconnector:
         return df 
     
     def fetch_activemass(self, id):
+        """
+        Function to fetch the active mass of a given cell.
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+
+        Returns
+        -------
+        active_mass : float
+            Active mass of the cell in mg.
+
+        """
                 
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT DISTINCT active_material FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        self.cursor.execute(f"SELECT DISTINCT active_material FROM `testlab-db`.schedule WHERE barcode = '{id}';")
         active_mass = float(self.cursor.fetchall()[0][0].replace(",", "."))
                
         return active_mass
     
     def fetch_status(self, id):
+        """
+        Function to fetch the status of a given cell
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+            
+        Returns
+        -------
+        record : string
+            Status of the cell ('running', 'stop', 'finished').
+
+        """
 
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT btsSysState FROM `testlab-db`.channel_status WHERE packBarCode LIKE '%{id}%';")
+        self.cursor.execute(f"SELECT btsSysState FROM `testlab-db`.channel_status WHERE packBarCode LIKE '{id}';")
         record = self.cursor.fetchall()[0][0]
                
         return record
     
     def fetch_chamber(self, id):
-                
+        """
+        Function to fetch the chamber and channel number
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+            
+        Returns
+        -------
+        df : pd dataframe
+            Table with builder and channel.
+
+        """        
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
         # self.cursor.execute(f"SELECT CONCAT(equiptCode, ",", channelNo, ",", channelCode) FROM `testlab-db`.channel_status WHERE packBarCode LIKE '%{id}%';")
-        self.cursor.execute(f"SELECT DISTINCT Builder, chl_id FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        self.cursor.execute(f"SELECT DISTINCT Builder, chl_id FROM `testlab-db`.schedule WHERE barcode = '{id}';")
         records = self.cursor.fetchall()
         
         # Get column names
@@ -443,21 +524,48 @@ class DBconnector:
         return df 
     
     def fetch_lastCycleNumber(self, id):
-                
+        """
+        Function to fetch the last cycle number
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+
+        Returns
+        -------
+        record : int
+            cycle number.
+
+        """
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT cycle_id from `testlab-db`.cycle where barcode like '%{id}%' ORDER BY CAST(cycle_id AS UNSIGNED) DESC LIMIT 1;")
+        self.cursor.execute(f"SELECT cycle_id from `testlab-db`.cycle where barcode = '{id}' ORDER BY CAST(cycle_id AS UNSIGNED) DESC LIMIT 1;")
         record = int(self.cursor.fetchall()[0][0])
                
         return record
     
     def fetch_protocol(self, id):
+        """
+        Function to fetch the protocol performed by a given cell
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+
+        Returns
+        -------
+        df : pd dataframe
+            table with the protocol.
+
+        """
                 
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT test_id, seq_id, step_id, step_type, step_time, setting_voltage, setting_rate, setting_current, cut_of_rate, cut_of_current, recording_conditions FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        self.cursor.execute(f"SELECT test_id, seq_id, step_id, step_type, step_time, setting_voltage, setting_rate, setting_current, cut_of_rate, cut_of_current, recording_conditions FROM `testlab-db`.schedule WHERE barcode = '{id}';")
         records = self.cursor.fetchall()
                
         # Get column names
@@ -473,11 +581,24 @@ class DBconnector:
         return df 
     
     def fetch_time(self, id):
-                
+        """
+        Fucntion to fetch the start time, end time and builder of the protocols applied to a given cell
+
+        Parameters
+        ----------
+        id : string
+            Cell ID from Vicarli System.
+
+        Returns
+        -------
+        df : pd dataframe
+            table with builder start and end time.
+
+        """
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
-        self.cursor.execute(f"SELECT DISTINCT Builder, StartTIme, EndTime FROM `testlab-db`.schedule WHERE barcode LIKE '%{id}%';")
+        self.cursor.execute(f"SELECT DISTINCT Builder, StartTIme, EndTime FROM `testlab-db`.schedule WHERE barcode LIKE '{id}';")
         records = self.cursor.fetchall()
                
         # Get column names
@@ -493,7 +614,15 @@ class DBconnector:
         return df
     
     def fetch_qctable(self,):
-                
+        """
+        Function to fetch the quality check data. this is a big table with the merge of the pouch cell parameters, the quality check measurements, the hioki data and the cycled performed by all the pouch cells
+
+        Returns
+        -------
+        df : pd dataframe
+            table with all the data of the pouch cells.
+
+        """
         # Create a cursor object
         self.set_cursor()
         # Fetch all records from the table
@@ -596,28 +725,120 @@ class DBconnector:
             dataframe with the cell information.
 
         """
-        df = self.general_query(f"SELECT * FROM `dev-db`.ids WHERE barcode_corrected = '{id}';")
+        df = self.general_query(f"SELECT * FROM `lab-db`.ids WHERE barcode_corrected = '{id}';")
         return df
     
-    def fetch_specific_capacities(self, id):
-        df = self.general_query(f"SELECT cycle_id, specific_chg_capa, specific_dchg_capa FROM `dev-db`.cycle_data WHERE barcode LIKE '{id}';")
-        return df
-    
-    def fetch_specific_efficiencies(self, id):
-        df = self.general_query(f"SELECT cycle_id, ce, rte, my_soh FROM `dev-db`.cycle_data WHERE barcode LIKE '{id}';")
+    def fetch_cycledata(self, id):
+        """
+        Function to fetch the cycle data. cycle number, specific charge and discharge capacity, ce, rte, soh
+
+        Parameters
+        ----------
+        id : str
+            cell id, e.g. '1003-BQV000000000000217-1'.
+
+        Returns
+        -------
+        df : pd dataframe
+            table with the cycle data.
+
+        """
+        
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT cycle_id, specific_chg_capa, specific_dchg_capa, ce, rte, my_soh FROM `lab-db`.cycle_data WHERE barcode = '{id}';")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        #self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
+        
         return df
     
     def fetch_steptime(self, id):
-        df = self.general_query(f"SELECT cycle_id, step_type, step_time FROM `dev-db`.step_time WHERE barcode = '{id}';")
+        """
+        Function to fetch the step time. the table is pivoted, ie in the rows there are the cycles, the columns are the step types and the values are the time duration of the given step type as a function of the cycle
+
+        Parameters
+        ----------
+        id : str
+            cell id, e.g. '1003-BQV000000000000217-1'.
+
+        Returns
+        -------
+        df : pd dataframe
+            table with the step time duration.
+
+        """
+        
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT cycle_id, step_type, step_time FROM `lab-db`.step_time WHERE barcode = '{id}';")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        #self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
         pivot_df = pd.pivot(df, values='step_time', index='cycle_id', columns='step_type').reset_index()
         return pivot_df
     
+    
     def fetch_end_voltage(self, id):
-        df = self.general_query(f"SELECT cycle_id, step_type, previous_step_type, end_voltage FROM `dev-db`.end_voltage WHERE barcode = '{id}';")
+        """
+        Function to fetch the end voltage. the table is pivoted, ie in the rows there are the cycles, the previous step column is the type of the previous step and the values are the time duration of the given step type as a function of the cycle
+        the table contains the last voltage measurement of the rest step and it reports if the previous step is a charge or discharge step.
+
+        Parameters
+        ----------
+        id : str
+            cell id, e.g. '1003-BQV000000000000217-1'.
+
+        Returns
+        -------
+        df : pd dataframe
+            table with the end voltage.
+
+        """
+        
+        # Create a cursor object
+        self.set_cursor()
+        # Fetch all records from the table
+        self.cursor.execute(f"SELECT cycle_id, step_type, previous_step_type, end_voltage FROM `lab-db`.end_voltage WHERE barcode = '{id}';")
+        records = self.cursor.fetchall()
+               
+        # Get column names
+        column_names = [i[0] for i in self.cursor.description]
+        
+        # Close cursor and connection
+        #self.close_connection()
+        
+        # Load records into Pandas DataFrame
+        df = pd.DataFrame(records, columns=column_names)
         pivot_df = pd.pivot(df, values='end_voltage', index='cycle_id', columns='previous_step_type').reset_index()
         return pivot_df
     
     def fetch_hioki(self):
+        """
+        Function to fetch he hioki data
+
+        Returns
+        -------
+        df_hioki : pd dataframe
+            table with the data.
+
+        """
         # Connect to MySQL
         self.connect()
                 
