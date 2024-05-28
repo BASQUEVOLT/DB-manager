@@ -6,8 +6,8 @@ pkgs.mkShell {
     ruff
     (
       let
-        db-manager = python3.pkgs.buildPythonPackage {
-          pname = "db-manager";
+        rdlab_dbconnector = python3.pkgs.buildPythonPackage {
+          pname = "rdlab_dbconnector";
           version = "0.1.0";
           src = ./.;
           format = "setuptools";
@@ -16,7 +16,7 @@ pkgs.mkShell {
             pandas
             numpy
           ];
-          doCheck=false;
+          doCheck = false;
         };
       in
         python3.withPackages (ps: [
