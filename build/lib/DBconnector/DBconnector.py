@@ -566,8 +566,8 @@ class DBconnector:
             'Mass_of_stack':float,                            
             'Mass_of_electrolyte':float,                      
             'Density_of_electrolyte':float,                   
-            'Date_of_filling':float,                          
-            'OCV':float,                                      
+            'Date_of_filling':str,                          
+            'OCV':str,                                      
             'ACIR':float, 
             'max_cycle':float,                               
             'total_specific_discharge_energy':float,               
@@ -575,7 +575,7 @@ class DBconnector:
             }
         # Load records into Pandas DataFrame
         df = pd.DataFrame(records, columns=column_names)
-
+        df.replace('', None, inplace=True)
         df = df.astype(data_dict)
 
 
