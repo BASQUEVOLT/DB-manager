@@ -29,7 +29,7 @@
     };
     packages.x86_64-linux.rdlab_dbconnector = pkgs.python3.pkgs.buildPythonPackage {
       pname = "rdlab_dbconnector";
-      version = "0.1.0";
+      version = "0.1.1";
       src = ./.;
       format = "setuptools";
       propagatedBuildInputs = with pkgs.python3Packages; [

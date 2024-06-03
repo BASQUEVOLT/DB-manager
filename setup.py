@@ -9,7 +9,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="rdlab_dbconnector",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
     description="Utility to connect to the neware server and fetch the data",
     long_description=open("README.md").read(),
