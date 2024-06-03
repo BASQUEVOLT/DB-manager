@@ -23,7 +23,11 @@
       ];
     };
   in {
-    packages.x86_64-linux.default = pkgs.python3.pkgs.buildPythonPackage {
+    devShells.x86_64-linux.rdlab_dbconnector = pkgs.mkShell {
+      name = "lab-rd-dashboard";
+      packages = [self.packages.x86_64-linux.rdlab_dbconnector];
+    };
+    packages.x86_64-linux.rdlab_dbconnector = pkgs.python3.pkgs.buildPythonPackage {
       pname = "rdlab_dbconnector";
       version = "0.1.0";
       src = ./.;
@@ -35,5 +39,6 @@
       ];
       doCheck = false;
     };
+    packages.x86_64-linux.default = self.packages.x86_64-linux.rdlab_dbconnector;
   };
 }
